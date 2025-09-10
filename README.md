@@ -4,7 +4,7 @@
 
 Noggin is a minimalist, playful web application designed to help users sharpen their cognitive abilities through a series of engaging brain-training challenges. Built with React and TypeScript, it provides a seamless, linear experience that tests speed, focus, logic, and memory.
 
-![Noggin Logo](src/assets/ad58094748433b4de87596d819146b9da22d2517.png)
+![Noggin Logo](src/assets/logo.png)
 
 
 ## 🎮 How to Play
