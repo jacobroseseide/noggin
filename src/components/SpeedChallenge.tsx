@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 
@@ -54,8 +54,8 @@ export default function SpeedChallenge({ onNext }: SpeedChallengeProps) {
 
   const getShapeComponent = (shapeType: string, isHighlighted: boolean, index: number) => {
     const baseClasses = "w-16 h-16 cursor-pointer transition-all duration-200 flex items-center justify-center rounded-2xl border-2";
-    const normalClasses = "bg-[#FDF9F3] border-[#A987D0] hover:bg-[#A987D0] hover:text-[#FDF9F3]";
-    const highlightedClasses = "bg-[#A987D0] border-[#A987D0] text-[#FDF9F3] scale-110 shadow-lg";
+    const normalClasses = "bg-[#FDF9F3] border-[#A987D0] text-[#A987D0]";
+    const highlightedClasses = "bg-[#FDF9F3] border-[#EC8BD0] text-[#EC8BD0] scale-110 shadow-lg ring-4 ring-[#EC8BD0] ring-opacity-50";
     
     const classes = `${baseClasses} ${isHighlighted ? highlightedClasses : normalClasses}`;
 
