@@ -4,7 +4,7 @@
 
 Noggin is a minimalist, playful web application designed to help users sharpen their cognitive abilities through a series of engaging brain-training challenges. Built with React and TypeScript, it provides a seamless, linear experience that tests speed, focus, logic, and memory.
 
-![Noggin Logo](src/assets/ad58094748433b4de87596d819146b9da22d2517.png)
+![Noggin Logo](src/assets/logo.png)
 
 ## ✨ Features
 
@@ -119,7 +119,6 @@ noggin/
 ```
 
 ## 🎮 How to Play
-
 1. **Start**: Click the "start" button on the home page
 2. **Speed Challenge**: Tap the highlighted shape as quickly as possible
 3. **Focus Challenge**: Find and click the shape that appears only once
@@ -162,7 +161,8 @@ This code is made available solely for the purpose of demonstrating programming 
 
 ## 📞 Contact
 
-- **Project Link**: [https://github.com/yourusername/noggin](https://github.com/yourusername/noggin)
+- **LinkedIn**: https://www.linkedin.com/in/jacobroseseiden
+- **Email**: jacobroseseiden.prof@gmail.com
 - **Portfolio**: This project is part of my professional portfolio
 
 ---
