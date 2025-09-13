@@ -1,5 +1,5 @@
 import { useState } from "react";
-import logo from "figma:asset/ad58094748433b4de87596d818146b9da22d2517.png";
+import logo from "./assets/logo.png";
 import { Button } from "./components/ui/button";
 import SpeedChallenge from "./components/SpeedChallenge";
 import FocusChallenge from "./components/FocusChallenge";

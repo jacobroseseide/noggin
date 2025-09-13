@@ -129,7 +129,6 @@ export default function MemoryChallenge({ onNext }: MemoryChallengeProps) {
             .map((symbol, index) => {
               const isClickable = gamePhase === "recreate";
               const isClicked = userSequence.includes(index);
-              const isNext = gamePhase === "recreate" && !isClicked;
               
               return (
                 <div
