@@ -11,7 +11,7 @@ const SYMBOLS = ["●", "■", "▲", "♦", "⬡", "★", "♥", "⬟", "◆", 
 const GRID_SIZE = 12; // 3x4 grid
 
 export default function MemoryChallenge({ onNext }: MemoryChallengeProps) {
-  const [gamePhase, setGamePhase] = useState<"memorize" | "recreate" | "complete">("memorize");
+  const [gamePhase, setGamePhase] = useState<"instructions" | "memorize" | "recreate" | "complete">("instructions");
   const [timeLeft, setTimeLeft] = useState(5); // 5 seconds to memorize
   const [userSequence, setUserSequence] = useState<number[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
@@ -30,6 +30,11 @@ export default function MemoryChallenge({ onNext }: MemoryChallengeProps) {
       shuffledGrid: shuffled
     };
   }, []);
+
+  // Handle start button click
+  const handleStartGame = () => {
+    setGamePhase("memorize");
+  };
 
   // Handle memorization timer
   useEffect(() => {
@@ -63,7 +68,7 @@ export default function MemoryChallenge({ onNext }: MemoryChallengeProps) {
     }
   };
 
-  const progressPercentage = gamePhase === "memorize" ? ((5 - timeLeft) / 5) * 100 : 100;
+  const progressPercentage = gamePhase === "memorize" ? ((5 - timeLeft) / 5) * 100 : gamePhase === "instructions" ? 0 : 100;
   const isCorrectSequence = userSequence.length === GRID_SIZE;
 
   return (
@@ -80,11 +85,13 @@ export default function MemoryChallenge({ onNext }: MemoryChallengeProps) {
         <div className="space-y-2">
           <div className="flex justify-between text-sm text-[#A987D0] opacity-75">
             <span>
-              {gamePhase === "memorize" ? "Memorization Time" : 
+              {gamePhase === "instructions" ? "Ready to start" :
+               gamePhase === "memorize" ? "Memorization Time" : 
                gamePhase === "recreate" ? "Recreation Progress" : "Complete"}
             </span>
             <span>
-              {gamePhase === "memorize" ? `${timeLeft}s` : 
+              {gamePhase === "instructions" ? "Click Start" :
+               gamePhase === "memorize" ? `${timeLeft}s` : 
                gamePhase === "recreate" ? `${currentStep}/${GRID_SIZE}` : "Done"}
             </span>
           </div>
@@ -97,58 +104,85 @@ export default function MemoryChallenge({ onNext }: MemoryChallengeProps) {
 
       {/* Main content */}
       <main className="flex-1 flex flex-col items-center justify-center px-6">
-        {/* Instructions */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl text-[#A987D0] mb-4">
-            Memory Challenge
-          </h1>
-          
-          {gamePhase === "memorize" && (
-            <p className="text-[#A987D0] opacity-75">
-              Memorize the sequence of symbols below
-            </p>
-          )}
-          
-          {gamePhase === "recreate" && (
-            <p className="text-[#A987D0] opacity-75">
-              Click the symbols in the same order as shown
-            </p>
-          )}
-          
-          {gamePhase === "complete" && (
-            <p className="text-[#A987D0] opacity-75">
-              {isCorrectSequence ? "Perfect memory! You got the entire sequence!" : 
-               `Good effort! You remembered ${userSequence.length} out of ${GRID_SIZE} symbols correctly.`}
-            </p>
-          )}
-        </div>
-
-        {/* Game grid */}
-        <div className="grid grid-cols-4 gap-4 mb-8 max-w-md">
-          {(gamePhase === "memorize" ? originalSequence.map(item => item.symbol) : shuffledGrid)
-            .map((symbol, index) => {
-              const isClickable = gamePhase === "recreate";
-              const isClicked = userSequence.includes(index);
+        {gamePhase === "instructions" ? (
+          /* Instructions Phase */
+          <div className="text-center max-w-2xl">
+            <h1 className="text-3xl text-[#A987D0] mb-6">
+              Memory Challenge
+            </h1>
+            <div className="space-y-4 text-lg text-[#A987D0] opacity-90">
+              <p>You'll see a sequence of symbols for 5 seconds</p>
+              <p>Memorize the order of the symbols</p>
+              <p>Then recreate the sequence by clicking them in order</p>
+            </div>
+            <div className="mt-8">
+              <Button
+                onClick={handleStartGame}
+                className="px-8 py-3 rounded-full border-2 bg-[#FDF9F3] text-[#A987D0] border-[#A987D0] hover:bg-[#A987D0] hover:text-[#FDF9F3] transition-all"
+              >
+                Start Game
+              </Button>
+            </div>
+          </div>
+        ) : (
+          /* Game Phase */
+          <>
+            {/* Instructions */}
+            <div className="text-center mb-8">
+              <h1 className="text-2xl text-[#A987D0] mb-4">
+                Memory Challenge
+              </h1>
               
-              return (
-                <div
-                  key={index}
-                  className={`w-16 h-16 flex items-center justify-center rounded-2xl border-2 transition-all duration-200 ${
-                    isClickable 
-                      ? isClicked 
-                        ? "bg-[#A987D0] border-[#A987D0] text-[#FDF9F3] cursor-default"
-                        : "bg-[#FDF9F3] border-[#A987D0] hover:bg-[#A987D0] hover:text-[#FDF9F3] cursor-pointer"
-                      : "bg-[#FDF9F3] border-[#A987D0]"
-                  } ${gamePhase === "memorize" ? "animate-pulse" : ""}`}
-                  onClick={() => isClickable && !isClicked && handleSymbolClick(index)}
-                >
-                  <span className="text-2xl text-[#A987D0] transition-colors">
-                    {symbol}
-                  </span>
-                </div>
-              );
-            })}
-        </div>
+              {gamePhase === "memorize" && (
+                <p className="text-[#A987D0] opacity-75">
+                  Memorize the sequence of symbols below
+                </p>
+              )}
+              
+              {gamePhase === "recreate" && (
+                <p className="text-[#A987D0] opacity-75">
+                  Click the symbols in the same order as shown
+                </p>
+              )}
+              
+              {gamePhase === "complete" && (
+                <p className="text-[#A987D0] opacity-75">
+                  {isCorrectSequence ? "Perfect memory! You got the entire sequence!" : 
+                   `Good effort! You remembered ${userSequence.length} out of ${GRID_SIZE} symbols correctly.`}
+                </p>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Game grid - only show during game phases */}
+        {gamePhase !== "instructions" && (
+          <div className="grid grid-cols-4 gap-4 mb-8 max-w-md">
+            {(gamePhase === "memorize" ? originalSequence.map(item => item.symbol) : shuffledGrid)
+              .map((symbol, index) => {
+                const isClickable = gamePhase === "recreate";
+                const isClicked = userSequence.includes(index);
+                
+                return (
+                  <div
+                    key={index}
+                    className={`w-16 h-16 flex items-center justify-center rounded-2xl border-2 transition-all duration-200 ${
+                      isClickable 
+                        ? isClicked 
+                          ? "bg-[#A987D0] border-[#A987D0] text-[#FDF9F3] cursor-default"
+                          : "bg-[#FDF9F3] border-[#A987D0] hover:bg-[#A987D0] hover:text-[#FDF9F3] cursor-pointer"
+                        : "bg-[#FDF9F3] border-[#A987D0]"
+                    } ${gamePhase === "memorize" ? "animate-pulse" : ""}`}
+                    onClick={() => isClickable && !isClicked && handleSymbolClick(index)}
+                  >
+                    <span className="text-2xl text-[#A987D0] transition-colors">
+                      {symbol}
+                    </span>
+                  </div>
+                );
+              })}
+          </div>
+        )}
 
         {/* Current step indicator during recreation */}
         {gamePhase === "recreate" && (
@@ -159,18 +193,15 @@ export default function MemoryChallenge({ onNext }: MemoryChallengeProps) {
           </div>
         )}
 
-        {/* See Results button */}
-        <Button
-          className={`px-8 py-3 rounded-full border-2 transition-all ${
-            gamePhase !== "complete"
-              ? "bg-[#FDF9F3] text-[#A987D0] border-[#A987D0] opacity-50 cursor-not-allowed"
-              : "bg-[#FDF9F3] text-[#A987D0] border-[#A987D0] hover:bg-[#A987D0] hover:text-[#FDF9F3]"
-          }`}
-          onClick={onNext}
-          disabled={gamePhase !== "complete"}
-        >
-          See Results
-        </Button>
+        {/* See Results button - only show after game is complete */}
+        {gamePhase === "complete" && (
+          <Button
+            className="px-8 py-3 rounded-full border-2 transition-all bg-[#FDF9F3] text-[#A987D0] border-[#A987D0] hover:bg-[#A987D0] hover:text-[#FDF9F3]"
+            onClick={onNext}
+          >
+            See Results
+          </Button>
+        )}
 
         {/* Score display */}
         {gamePhase === "complete" && (

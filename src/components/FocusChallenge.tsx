@@ -52,11 +52,18 @@ const createGridData = () => {
 
 export default function FocusChallenge({ onNext }: FocusChallengeProps) {
   const [timeLeft, setTimeLeft] = useState(25); // 25 seconds
-  const [gameActive, setGameActive] = useState(true);
+  const [gameActive, setGameActive] = useState(false);
   const [found, setFound] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(true);
 
   // Generate initial grid with pairs and one unique shape
   const { grid, uniqueIndex } = useMemo(createGridData, []); // Empty dependency array - only generate once
+
+  // Handle start button click
+  const handleStartGame = () => {
+    setShowInstructions(false);
+    setGameActive(true);
+  };
 
   // Handle shape click
   const handleShapeClick = (index: number) => {
@@ -78,7 +85,7 @@ export default function FocusChallenge({ onNext }: FocusChallengeProps) {
     }
   }, [timeLeft, gameActive, found]);
 
-  const progressPercentage = ((25 - timeLeft) / 25) * 100;
+  const progressPercentage = gameActive ? ((25 - timeLeft) / 25) * 100 : 0;
 
   const getShapeComponent = (item: { shape: string; color: string; isUnique: boolean }, index: number) => {
     const baseClasses = "w-12 h-12 cursor-pointer transition-all duration-200 flex items-center justify-center rounded-2xl border-2";
@@ -116,8 +123,8 @@ export default function FocusChallenge({ onNext }: FocusChallengeProps) {
         </div>
         <div className="space-y-2 bg-[rgba(0,0,0,0)]">
           <div className="flex justify-between text-sm text-[#A987D0] opacity-75">
-            <span>Time Remaining</span>
-            <span>{timeLeft}s</span>
+            <span>{gameActive ? "Time Remaining" : "Ready to start"}</span>
+            <span>{gameActive ? `${timeLeft}s` : "Click Start"}</span>
           </div>
           <Progress 
             value={progressPercentage} 
@@ -128,39 +135,66 @@ export default function FocusChallenge({ onNext }: FocusChallengeProps) {
 
       {/* Main content */}
       <main className="flex-1 flex flex-col items-center justify-center px-6">
-        {/* Instructions */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl text-[#A987D0] mb-2">
-            Find the shape that appears only once!
-          </h1>
-          {found && (
-            <p className="text-[#A987D0] opacity-75">Great job! You found the unique shape!</p>
-          )}
-          {!found && !gameActive && (
-            <p className="text-[#A987D0] opacity-75">Time's up! The unique shape was highlighted.</p>
-          )}
-        </div>
+        {showInstructions ? (
+          /* Instructions Phase */
+          <div className="text-center max-w-2xl">
+            <h1 className="text-3xl text-[#A987D0] mb-6">
+              Focus Challenge
+            </h1>
+            <div className="space-y-4 text-lg text-[#A987D0] opacity-90">
+              <p>You'll see a grid of shapes where most appear in pairs</p>
+              <p>Find the one shape that appears only once!</p>
+              <p>You have 25 seconds to find the unique shape</p>
+            </div>
+            <div className="mt-8">
+              <Button
+                onClick={handleStartGame}
+                className="px-8 py-3 rounded-full border-2 bg-[#FDF9F3] text-[#A987D0] border-[#A987D0] hover:bg-[#A987D0] hover:text-[#FDF9F3] transition-all"
+              >
+                Start Game
+              </Button>
+            </div>
+          </div>
+        ) : (
+          /* Game Phase */
+          <>
+            {/* Instructions */}
+            <div className="text-center mb-8">
+              <h1 className="text-2xl text-[#A987D0] mb-2">
+                Find the shape that appears only once!
+              </h1>
+              {found && (
+                <p className="text-[#A987D0] opacity-75">Great job! You found the unique shape!</p>
+              )}
+              {!found && !gameActive && (
+                <p className="text-[#A987D0] opacity-75">Time's up! The unique shape was highlighted.</p>
+              )}
+            </div>
 
-        {/* Game grid */}
-        <div className="grid grid-cols-5 gap-3 mb-8 max-w-lg">
-          {grid.map((item, index) => getShapeComponent(item, index))}
-        </div>
+            {/* Game grid */}
+            <div className="grid grid-cols-5 gap-3 mb-8 max-w-lg">
+              {grid.map((item, index) => getShapeComponent(item, index))}
+            </div>
+          </>
+        )}
 
-        {/* Next button */}
-        <Button
-          className={`px-8 py-3 rounded-full border-2 transition-all ${
-            gameActive && !found
-              ? "bg-[#FDF9F3] text-[#A987D0] border-[#A987D0] opacity-50 cursor-not-allowed"
-              : "bg-[#FDF9F3] text-[#A987D0] border-[#A987D0] hover:bg-[#A987D0] hover:text-[#FDF9F3]"
-          }`}
-          onClick={onNext}
-          disabled={gameActive && !found}
-        >
-          Next → Logic Challenge
-        </Button>
+        {/* Next button - only show after game is complete */}
+        {!showInstructions && (
+          <Button
+            className={`px-8 py-3 rounded-full border-2 transition-all ${
+              gameActive && !found
+                ? "bg-[#FDF9F3] text-[#A987D0] border-[#A987D0] opacity-50 cursor-not-allowed"
+                : "bg-[#FDF9F3] text-[#A987D0] border-[#A987D0] hover:bg-[#A987D0] hover:text-[#FDF9F3]"
+            }`}
+            onClick={onNext}
+            disabled={gameActive && !found}
+          >
+            Next → Logic Challenge
+          </Button>
+        )}
 
         {/* Success message */}
-        {found && (
+        {!showInstructions && found && (
           <div className="mt-4 text-center">
             <p className="text-[#A987D0] opacity-75">
               Excellent focus! You found it with {timeLeft} seconds remaining.
