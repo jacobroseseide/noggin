@@ -1,6 +1,7 @@
 import { GameConfig, GameResult } from "../types/gameConfig";
 import GameEngine from "./GameEngine";
 import LogicGame from "./games/LogicGame";
+import SpeedGame from "./games/SpeedGame";
 
 interface GameWrapperProps {
   config: GameConfig;
@@ -17,6 +18,18 @@ export default function GameWrapper({ config, onComplete, onNext }: GameWrapperP
       case 'logic-spatial':
         return (
           <LogicGame
+            config={config}
+            onNext={onNext}
+            gameState={gameState}
+            gameActions={gameActions}
+          />
+        );
+      
+      case 'speed-shape-tap':
+      case 'speed-color-match':
+      case 'speed-reaction':
+        return (
+          <SpeedGame
             config={config}
             onNext={onNext}
             gameState={gameState}
