@@ -1,28 +1,43 @@
 import { useState } from "react";
 import logo from "./assets/logo.png";
 import { Button } from "./components/ui/button";
-import SpeedChallenge from "./components/SpeedChallenge";
-import FocusChallenge from "./components/FocusChallenge";
-import LogicChallenge from "./components/LogicChallenge";
-import MemoryChallenge from "./components/MemoryChallenge";
+import GameSelector from "./components/GameSelector";
+import GameWrapper from "./components/GameWrapper";
+import { GameConfig, GameResult } from "./types/gameConfig";
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<"home" | "speed" | "focus" | "logic" | "memory" | "results">("home");
+  const [currentPage, setCurrentPage] = useState<"home" | "game-selector" | "game" | "results">("home");
+  const [selectedGame, setSelectedGame] = useState<GameConfig | null>(null);
+  const [gameResults, setGameResults] = useState<GameResult[]>([]);
 
-  if (currentPage === "speed") {
-    return <SpeedChallenge onNext={() => setCurrentPage("focus")} />;
+  const handleGameSelect = (gameConfig: GameConfig) => {
+    setSelectedGame(gameConfig);
+    setCurrentPage("game");
+  };
+
+  const handleGameComplete = (result: GameResult) => {
+    setGameResults(prev => [...prev, result]);
+    setCurrentPage("results");
+  };
+
+  const handleBackToHome = () => {
+    setCurrentPage("home");
+    setSelectedGame(null);
+    setGameResults([]);
+  };
+
+  if (currentPage === "game-selector") {
+    return <GameSelector onGameSelect={handleGameSelect} onBack={handleBackToHome} />;
   }
 
-  if (currentPage === "focus") {
-    return <FocusChallenge onNext={() => setCurrentPage("logic")} />;
-  }
-
-  if (currentPage === "logic") {
-    return <LogicChallenge onNext={() => setCurrentPage("memory")} />;
-  }
-
-  if (currentPage === "memory") {
-    return <MemoryChallenge onNext={() => setCurrentPage("results")} />;
+  if (currentPage === "game" && selectedGame) {
+    return (
+      <GameWrapper
+        config={selectedGame}
+        onComplete={handleGameComplete}
+        onNext={() => setCurrentPage("game-selector")}
+      />
+    );
   }
 
   if (currentPage === "results") {
@@ -144,7 +159,7 @@ export default function App() {
         {/* Start button */}
         <Button 
           className="px-8 py-3 rounded-full bg-[#FDF9F3] text-[#A987D0] border-2 border-[#A987D0] hover:bg-[#A987D0] hover:text-[#FDF9F3]"
-          onClick={() => setCurrentPage("speed")}
+          onClick={() => setCurrentPage("game-selector")}
         >
           start
         </Button>
