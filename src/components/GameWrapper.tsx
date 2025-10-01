@@ -3,6 +3,7 @@ import GameEngine from "./GameEngine";
 import LogicGame from "./games/LogicGame";
 import SpeedGame from "./games/SpeedGame";
 import FocusGame from "./games/FocusGame";
+import MemoryGame from "./games/MemoryGame";
 
 interface GameWrapperProps {
   config: GameConfig;
@@ -50,7 +51,19 @@ export default function GameWrapper({ config, onComplete, onNext }: GameWrapperP
           />
         );
       
-      // Add other game types here as we implement them
+      case 'memory-sequence':
+      case 'memory-spatial':
+      case 'memory-number':
+        return (
+          <MemoryGame
+            config={config}
+            onNext={onNext}
+            gameState={gameState}
+            gameActions={gameActions}
+          />
+        );
+      
+      // All game types are now implemented!
       default:
         return (
           <div className="text-center">
