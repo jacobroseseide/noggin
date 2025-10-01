@@ -2,6 +2,7 @@ import { GameConfig, GameResult } from "../types/gameConfig";
 import GameEngine from "./GameEngine";
 import LogicGame from "./games/LogicGame";
 import SpeedGame from "./games/SpeedGame";
+import FocusGame from "./games/FocusGame";
 
 interface GameWrapperProps {
   config: GameConfig;
@@ -30,6 +31,18 @@ export default function GameWrapper({ config, onComplete, onNext }: GameWrapperP
       case 'speed-reaction':
         return (
           <SpeedGame
+            config={config}
+            onNext={onNext}
+            gameState={gameState}
+            gameActions={gameActions}
+          />
+        );
+      
+      case 'focus-unique-shape':
+      case 'focus-color-find':
+      case 'focus-stroop':
+        return (
+          <FocusGame
             config={config}
             onNext={onNext}
             gameState={gameState}
